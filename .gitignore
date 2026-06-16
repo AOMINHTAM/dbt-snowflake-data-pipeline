@@ -1,0 +1,11 @@
+# Môi trường ảo Python
+.venv/
+__pycache__/
+*.pyc
+
+# Các file logs và cấu hình rác của dbt
+logs/
+target/
+dbt_packages/
+
+profiles.yml
