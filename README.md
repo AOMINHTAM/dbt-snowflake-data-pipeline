@@ -97,6 +97,14 @@ SQL Access Control Error (Snowflake Error 003001): Rectified schema ownership as
 
 ---
 
+## 🖼️ Execution Results
+
+| 🌬️ Apache Airflow DAG (Success) | ❄️ Snowflake Models Generated |
+| :---: | :---: |
+| <img src="images/01-airflow-success.png" width="450" alt="Airflow DAG Success"> | <img src="images/02-snowflake-results.png" width="450" alt="Snowflake Results"> |
+
+---
+
 ## 🤝 Acknowledgments
 
 Special thanks to **Tu Nguyen** and the data engineering community on **YouTube** for their invaluable tutorials, guidance, and technical support throughout the implementation and debugging of this modern data pipeline project.
