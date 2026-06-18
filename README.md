@@ -26,6 +26,10 @@ This project implements a **Modern Data Stack (MDS)** utilizing a fully automate
 
 ## 🛠️ Tech Stack & Architecture
 
+<div align="center">
+  <img src="images/architecture.png" alt="Data Pipeline Architecture" width="800">
+</div>
+
 | Layer | Component | Technology | Description |
 | :--- | :--- | :---: | :--- |
 | **Storage & Compute** | Data Warehouse | ❄️ Snowflake | Stores raw TPC-H data and executes heavy SQL computational transformation workloads triggered by dbt. |
