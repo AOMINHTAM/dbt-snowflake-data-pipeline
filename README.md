@@ -60,28 +60,31 @@ dbt-snowflake-data-pipeline/
 ## 🚀 Getting Started
 1. Local Environment Preparation
 From the project root directory, activate the Python virtual environment and pull the required external dbt dependency packages locally:
-./dbt_venv/bin/dbt deps --project-dir dags/dbt/data_pipeline
+
+     ./dbt_venv/bin/dbt deps --project-dir dags/dbt/data_pipeline
 
 2. Infrastructure Setup & Access Control on Snowflake
 Open your Snowflake Worksheet console and execute the following SQL script using the ACCOUNTADMIN role to initialize your warehouse computing power and handle schema privilege boundaries (future privileges). This ensures dbt can seamlessly materialize models without access blockages:
-USE ROLE ACCOUNTADMIN;
+    
+    USE ROLE ACCOUNTADMIN;
 
-CREATE WAREHOUSE IF NOT EXISTS dbt_wh WITH WAREHOUSE_SIZE='x-small';
-CREATE DATABASE IF NOT EXISTS dbt_db;
-CREATE ROLE IF NOT EXISTS dbt_role;
+    CREATE WAREHOUSE IF NOT EXISTS dbt_wh WITH WAREHOUSE_SIZE='x-small';
+    CREATE DATABASE IF NOT EXISTS dbt_db;
+    CREATE ROLE IF NOT EXISTS dbt_role;
 
-GRANT ROLE dbt_role TO USER AOMINHTAM;
-GRANT USAGE ON WAREHOUSE dbt_wh TO ROLE dbt_role;
-GRANT ALL ON DATABASE dbt_db TO ROLE dbt_role;
+    GRANT ROLE dbt_role TO USER AOMINHTAM;
+    GRANT USAGE ON WAREHOUSE dbt_wh TO ROLE dbt_role;
+    GRANT ALL ON DATABASE dbt_db TO ROLE dbt_role;
 
--- Grant future object access within the schema to ACCOUNTADMIN for seamless orchestration
-GRANT ALL PRIVILEGES ON SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
-GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
-GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
+    -- Grant future object access within the schema to ACCOUNTADMIN for seamless orchestration
+    GRANT ALL PRIVILEGES ON SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
+    GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
+    GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
 
 3. Launching the Orchestration on Airflow
 Spin up your local isolated Airflow container cluster using the Astronomer CLI:
-astro dev start
+
+    astro dev start
 
 | Service | Access Link / Endpoint | Credentials / Role |
 | :--- | :--- | :--- |
