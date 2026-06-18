@@ -94,13 +94,3 @@ GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNT
 * **SQL access control error (Snowflake Lỗi 003001):** Sửa triệt để lỗi xung đột quyền sở hữu schema giữa `dbt_role` và `ACCOUNTADMIN` bằng cách cấp bổ sung đặc quyền `FUTURE TABLES/VIEWS` trực tiếp trên database Snowflake.
 
 ---
-
-## 🖼️ Screenshots Gallery
-
-### 1. Airflow DAG (Success)
-
-<img src="images/01-airflow-success.png" width="800" alt="Airflow DAG Success">
-
-### 2. Thành quả Tables/Views được tạo tự động trên Snowflake
-
-<img src="images/02-snowflake-results.png" width="800" alt="Snowflake Models Generated">
