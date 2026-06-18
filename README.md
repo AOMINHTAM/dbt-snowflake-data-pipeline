@@ -56,8 +56,8 @@ dbt-snowflake-data-pipeline/
 ├── dbt_venv/                     # Isolated Python virtual environment containing dbt-core & dbt-snowflake
 ├── Dockerfile                    # Docker configuration setup to build consistent Airflow container runtimes
 └── .gitignore                    # Prevents build artifacts and sensitive credentials (profiles.yml) from being tracked
-
-🚀 Getting Started
+```
+## 🚀 Getting Started
 1. Local Environment Preparation
 From the project root directory, activate the Python virtual environment and pull the required external dbt dependency packages locally:
 ./dbt_venv/bin/dbt deps --project-dir dags/dbt/data_pipeline
@@ -88,7 +88,7 @@ astro dev start
 | **Airflow Webserver** | `http://localhost:8080` *(Default port mapped via Astro CLI)* | Administrator (Internal Account) |
 | **Snowflake Console** | `https://bs54698.ap-southeast-7.aws.snowflakecomputing.com` | Personal Account: `AOMINHTAM` / Role: `dbt_role` |
 
-📝 Troubleshooting Highlights
+## 📝 Troubleshooting Highlights
 Broken DAG (Docker Absolute Path Misconfiguration): Fixed the Cosmos library absolute path mismatch that occurred during container runtime by explicitly mapping the setup directory path directly to /usr/local/airflow/dags/dbt/data_pipeline.
 
 Compilation Error (Missing dbt_utils package dependency): Resolved macro loading errors by shifting the packages.yml file to the correct root dbt sub-project directory and running localized dbt deps to properly bundle extensions.
