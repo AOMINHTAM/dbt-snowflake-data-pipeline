@@ -13,29 +13,25 @@
 
 ## 📖 Project Overview
 
-Dự án này triển khai một hệ thống **Modern Data Stack (MDS)** theo mô hình **ELT Pipeline** tự động hoàn toàn. Hệ thống trích xuất dữ liệu mẫu ngành bán lẻ (TPC-H), nạp vào Cloud Data Warehouse **Snowflake**, sau đó sử dụng **dbt-core** để tổ chức mô hình hóa dữ liệu (Data Modeling) theo cấu trúc Medallion, toàn bộ luồng được điều phối trực quan bởi **Apache Airflow** (Astronomer Cosmos).
+This project implements a **Modern Data Stack (MDS)** utilizing a fully automated **ELT Data Pipeline**. The system extracts raw retail sample data (TPC-H), loads it into the **Snowflake** Cloud Data Warehouse, and leverages **dbt-core** to perform robust data modeling following the Medallion Architecture. The entire workflow is dynamically orchestrated and monitored through **Apache Airflow** via Astronomer Cosmos.
 
 ### Key Features
-- **Modern ELT Workflow**: Chia tách rõ ràng giữa tầng lưu trữ/tính toán (Snowflake) và tầng điều phối (Airflow).
-- **Medallion Data Architecture**: Tổ chức dữ liệu qua các lớp Staging (`stg_`) và Marts (`fct_`) giúp chuẩn hóa và sẵn sàng cho Business Intelligence.
-- **Dynamic Task Generation**: Sử dụng *Astronomer Cosmos* để tự động phân rã toàn bộ project dbt thành các Task con dạng đồ thị DAG trực quan trên Airflow mà không cần viết lại code Python thủ công.
-- **Advanced Transformations**: Tích hợp gói thư viện mở rộng `dbt_utils` để tối ưu hóa việc xử lý chuỗi và tính toán logic.
-- **Isolated Environment**: Chạy dbt trong môi trường ảo Python cách ly (`dbt_venv`) nằm ngay bên trong Docker container của Airflow để tránh xung đột thư viện.
+- **Modern ELT Workflow**: Strict decoupling between the storage/compute layer (Snowflake) and the orchestration layer (Airflow).
+- **Medallion Data Architecture**: Structuring data transformation pipelines across Staging (`stg_`) and Marts (`fct_`) layers for optimized BI readiness.
+- **Dynamic Task Generation**: Utilizes *Astronomer Cosmos* to automatically parse the dbt project into modular Airflow DAG tasks dynamically, eliminating manual Python DAG code maintenance.
+- **Advanced Transformations**: Integrated the `dbt_utils` extension package to streamline complex string manipulations and computational logic.
+- **Isolated Environment**: Runs dbt within an isolated Python virtual environment (`dbt_venv`) inside the Airflow Docker container to prevent dependency conflicts.
 
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
-<div align="center">
-  <img src="images/architecture.png" alt="Data Pipeline Architecture" width="800">
-</div>
-
 | Layer | Component | Technology | Description |
 | :--- | :--- | :---: | :--- |
-| **Storage & Compute** | Data Warehouse | ❄️ Snowflake | Lưu trữ dữ liệu thô (TPC-H) và thực thi tính toán các câu lệnh SQL từ dbt. |
-| **Transform** | Data Modeling | 🔨 dbt-core + dbt-snowflake | Đọc dữ liệu thô, biến đổi qua các layer và vật chất hóa (Materialize) thành View/Table trên Snowflake. |
-| **Orchestration** | Scheduler | 🌬️ Apache Airflow | Tự động lập lịch, quét cấu trúc dbt và kích hoạt pipeline chạy hàng ngày. |
-| **Infrastructure** | Container | 🐳 Docker & Astro CLI | Đóng gói toàn bộ môi trường Airflow Webserver, Scheduler, Triggerer giúp chạy nhất quán trên mọi máy tính. |
+| **Storage & Compute** | Data Warehouse | ❄️ Snowflake | Stores raw TPC-H data and executes heavy SQL computational transformation workloads triggered by dbt. |
+| **Transform** | Data Modeling | 🔨 dbt-core + dbt-snowflake | Reads raw ingestion layers, processes business logic through multiple stages, and materializes final Views/Tables in Snowflake. |
+| **Orchestration** | Scheduler | 🌬️ Apache Airflow | Automatically schedules, parses dbt project lineages, and triggers daily pipeline executions. |
+| **Infrastructure** | Container | 🐳 Docker & Astro CLI | Packages the Airflow Webserver, Scheduler, and Triggerer environments for consistent executions across any machine. |
 
 ---
 
@@ -44,24 +40,27 @@ Dự án này triển khai một hệ thống **Modern Data Stack (MDS)** theo m
 ```text
 dbt-snowflake-data-pipeline/
 ├── dags/
-│   ├── dbt_dags.py               # File cấu hình Airflow DAG điều phối dbt
+│   ├── dbt_dags.py               # Airflow DAG configuration file coordinating dbt execution
 │   └── dbt/
-│       └── data_pipeline/        # Thư mục gốc chứa toàn bộ dự án dbt
-│           ├── dbt_project.yml   # File cấu hình chính của dbt
-│           ├── packages.yml      # Khai báo các thư viện mở rộng (dbt_utils)
-│           ├── models/           # Nơi chứa các file SQL biến đổi dữ liệu
-│           │   ├── staging/      # Lớp Staging (stg_tpch_orders.sql,...)
-│           │   └── marts/        # Lớp Marts chứa bảng dữ liệu tinh lọc (fct_orders.sql)
-│           └── seeds/            # Dữ liệu tĩnh dạng csv nạp thủ công
-├── dbt_venv/                     # Môi trường ảo Python cách ly chứa dbt-core & dbt-snowflake
-├── Dockerfile                    # Cấu hình container cài đặt môi trường cho Airflow
-└── .gitignore                    # Chặn file rác và bảo mật tệp credentials (profiles.yml)
+│       └── data_pipeline/        # Root folder of the dbt project
+│           ├── dbt_project.yml   # Main dbt configuration file
+│           ├── packages.yml      # Third-party package declarations (dbt_utils)
+│           ├── models/           # SQL data transformation models directory
+│           │   ├── staging/      # Staging layer models (stg_tpch_orders.sql, etc.)
+│           │   └── marts/        # Marts layer containing refined fact models (fct_orders.sql)
+│           └── seeds/            # Static data storage for manual CSV seed loads
+├── dbt_venv/                     # Isolated Python virtual environment containing dbt-core & dbt-snowflake
+├── Dockerfile                    # Docker configuration setup to build consistent Airflow container runtimes
+└── .gitignore                    # Prevents build artifacts and sensitive credentials (profiles.yml) from being tracked
 
 🚀 Getting Started
-1. Chuẩn bị môi trường local 
-Tại thư mục gốc của dự án, khởi động môi trường ảo Python và tải các gói phụ thuộc (packages) cục bộ của dbt:Bash./dbt_venv/bin/dbt deps --project-dir dags/dbt/data_pipeline
-2. Thiết lập hạ tầng và phân quyền trên Snowflake
-Mở giao diện Snowflake Worksheet, chạy bộ lệnh SQL tối cao này bằng role ACCOUNTADMIN để khởi tạo hạ tầng và gỡ bẫy quyền truy cập (future privileges), đảm bảo dbt tạo View xé gió không bị chặn:SQLUSE ROLE ACCOUNTADMIN;
+1. Local Environment Preparation
+From the project root directory, activate the Python virtual environment and pull the required external dbt dependency packages locally:
+./dbt_venv/bin/dbt deps --project-dir dags/dbt/data_pipeline
+
+2. Infrastructure Setup & Access Control on Snowflake
+Open your Snowflake Worksheet console and execute the following SQL script using the ACCOUNTADMIN role to initialize your warehouse computing power and handle schema privilege boundaries (future privileges). This ensures dbt can seamlessly materialize models without access blockages:
+USE ROLE ACCOUNTADMIN;
 
 CREATE WAREHOUSE IF NOT EXISTS dbt_wh WITH WAREHOUSE_SIZE='x-small';
 CREATE DATABASE IF NOT EXISTS dbt_db;
@@ -71,26 +70,29 @@ GRANT ROLE dbt_role TO USER AOMINHTAM;
 GRANT USAGE ON WAREHOUSE dbt_wh TO ROLE dbt_role;
 GRANT ALL ON DATABASE dbt_db TO ROLE dbt_role;
 
--- Cấp đặc quyền tương lai trên Schema cho ACCOUNTADMIN thực thi điều phối
+-- Grant future object access within the schema to ACCOUNTADMIN for seamless orchestration
 GRANT ALL PRIVILEGES ON SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
 GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
 GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA DBT_DB.DBT_SCHEMA TO ROLE ACCOUNTADMIN;
-3. Khởi chạy hệ thống trên AirflowKhởi động cụm container Airflow bằng Astronomer CLI:Bashastro dev start
----
 
-## 🔗 Monitoring & Access
+3. Launching the Orchestration on Airflow
+Spin up your local isolated Airflow container cluster using the Astronomer CLI:
+astro dev start
 
 | Service | Access Link / Endpoint | Credentials / Role |
 | :--- | :--- | :--- |
-| **Airflow Webserver** | `http://localhost:8080` *(Cổng mặc định khi chạy Astro CLI)* | Administrator (Internal Account) |
-| **Snowflake Console** | `https://bs54698.ap-southeast-7.aws.snowflakecomputing.com` | Sử dụng tài khoản cá nhân `AOMINHTAM` / Role `dbt_role` |
+| **Airflow Webserver** | `http://localhost:8080` *(Default port mapped via Astro CLI)* | Administrator (Internal Account) |
+| **Snowflake Console** | `https://bs54698.ap-southeast-7.aws.snowflakecomputing.com` | Personal Account: `AOMINHTAM` / Role: `dbt_role` |
+
+📝 Troubleshooting Highlights
+Broken DAG (Docker Absolute Path Misconfiguration): Fixed the Cosmos library absolute path mismatch that occurred during container runtime by explicitly mapping the setup directory path directly to /usr/local/airflow/dags/dbt/data_pipeline.
+
+Compilation Error (Missing dbt_utils package dependency): Resolved macro loading errors by shifting the packages.yml file to the correct root dbt sub-project directory and running localized dbt deps to properly bundle extensions.
+
+SQL Access Control Error (Snowflake Error 003001): Rectified schema ownership assignment conflicts arising between dbt_role and ACCOUNTADMIN by directly setting up continuous FUTURE TABLES/VIEWS privileges on the target Snowflake database.
 
 ---
 
-## 📝 Nhật ký sửa lỗi (Troubleshooting Highlights)
+## 🤝 Acknowledgments
 
-* **Broken DAG (Mù đường dẫn Docker):** Khắc phục lỗi lệch cấu hình đường dẫn tuyệt đối của thư viện Cosmos khi đi vào container Docker bằng cách trỏ chuẩn xác về `/usr/local/airflow/dags/dbt/data_pipeline`.
-* **Compilation Error (Thiếu gói dbt_utils):** Di chuyển file `packages.yml` vào đúng thư mục con dự án dbt, chạy `dbt deps` bọc lót cục bộ để nạp thư viện xử lý macro thành công.
-* **SQL access control error (Snowflake Lỗi 003001):** Sửa triệt để lỗi xung đột quyền sở hữu schema giữa `dbt_role` và `ACCOUNTADMIN` bằng cách cấp bổ sung đặc quyền `FUTURE TABLES/VIEWS` trực tiếp trên database Snowflake.
-
----
+Special thanks to **Tu Nguyen** and the data engineering community on **YouTube** for their invaluable tutorials, guidance, and technical support throughout the implementation and debugging of this modern data pipeline project.
