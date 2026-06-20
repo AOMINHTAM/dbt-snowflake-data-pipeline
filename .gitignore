@@ -9,3 +9,8 @@ target/
 dbt_packages/
 
 profiles.yml
+
+# Bổ sung thêm các trường hợp tên venv khác và file .env
+venv/
+env/
+.env
