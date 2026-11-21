@@ -1,7 +1,8 @@
 <div align="center">
   <h1>Airflow dbt Snowflake Pipeline 🚀❄️</h1>
-  <p><em>A production-ready ELT Data Pipeline orchestrating dbt transformations inside Snowflake via Apache Airflow</em></p>
+  <p><em>Automated Containerized ELT Pipeline orchestrating dbt Core Star Schema modeling inside Snowflake via Apache Airflow &amp; Astronomer Cosmos</em></p>
 
+  [![Portfolio](https://img.shields.io/badge/Portfolio-Case_Study-F59E0B?logo=google-chrome&logoColor=white)](https://aominhtam-portfolio.vercel.app/projects/data-pipeline.html)
   [![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)]()
   [![dbt](https://img.shields.io/badge/dbt-Snowflake-FF694B?logo=dbt&logoColor=white)]()
   [![Snowflake](https://img.shields.io/badge/Snowflake-Data_Warehouse-29B5E8?logo=snowflake&logoColor=white)]()
@@ -11,9 +12,15 @@
 
 ---
 
-## 📖 Project Overview
+## 📖 Project Overview &amp; Dataset Scope
 
-This project implements a **Modern Data Stack (MDS)** utilizing a fully automated **ELT Data Pipeline**. The system extracts raw retail sample data (TPC-H), loads it into the **Snowflake** Cloud Data Warehouse, and leverages **dbt-core** to perform robust data modeling following the Medallion Architecture. The entire workflow is dynamically orchestrated and monitored through **Apache Airflow** via Astronomer Cosmos.
+* **Project Type:** Personal Cloud Engineering Project
+* **Dataset Source:** Snowflake TPC-H Sample Dataset (`snowflake_sample_data.tpch_sf1`)
+* **Modeling Layers:** Medallion Staging (`stg_tpch_orders`) &rarr; Pre-joined Kimball Star Schema Marts (`fct_orders`)
+* **Quality Scope:** Automated dbt `unique`, `not_null`, and referential integrity tests (note: no controlled cross-warehouse cache timing benchmark is claimed)
+* **Live Case Study:** [Read on Portfolio →](https://aominhtam-portfolio.vercel.app/projects/data-pipeline.html)
+
+This project implements a containerized **ELT Data Pipeline** extracting retail sample data (TPC-H) inside the **Snowflake** Cloud Data Warehouse and orchestrating **dbt Core** dimensional modeling through **Apache Airflow** via Astronomer Cosmos inside an isolated `dbt_venv`.
 
 ### Key Features
 - **Modern ELT Workflow**: Strict decoupling between the storage/compute layer (Snowflake) and the orchestration layer (Airflow).
